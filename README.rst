@@ -6,6 +6,9 @@ Django MarkdownX
 
 Django MarkdownX is a comprehensive Markdown_ plugin built for Django_, the renowned high-level Python web framework, with flexibility, extensibility, and ease-of-use at its core.
 
+This fork adds a ``MARKDOWNX_UPLOAD_BYPASS_IMAGE_PROCESSING_CONTENT_TYPES`` setting that governs which MIME types bypass PIL image processing. The base plugin has a hard-coded SVG exception, but processes and recompresses all other image types. This breaks animated GIFs, and unnecessarily (for our use) recompresses lossy image types.
+
+
 Documentation
 =============
 http://neutronx.github.io/django-markdownx/
