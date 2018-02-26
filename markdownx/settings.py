@@ -66,6 +66,19 @@ MARKDOWNX_UPLOAD_MAX_SIZE = _mdx('UPLOAD_MAX_SIZE', FIFTY_MEGABYTES)
 
 MARKDOWNX_UPLOAD_CONTENT_TYPES = _mdx('UPLOAD_CONTENT_TYPES', VALID_CONTENT_TYPES)
 
+# ASL19 patch: MARKDOWNX_UPLOAD_BYPASS_IMAGE_PROCESSING_CONTENT_TYPES includes
+# SVG by default (like the base plugin), and additional types if overridden.
+# This allows us to support GIF uploads without them getting mangled by PIL [1],
+# and allows us to avoid unnecessary recompression of lossy images.
+#
+# [1]: https://github.com/neutronX/django-markdownx/issues/24
+MARKDOWNX_UPLOAD_BYPASS_IMAGE_PROCESSING_CONTENT_TYPES = (
+    _mdx(
+        'UPLOAD_BYPASS_IMAGE_PROCESSING_CONTENT_TYPES',
+        ('image/svg+xml',)
+    )
+)
+
 MARKDOWNX_IMAGE_MAX_SIZE = _mdx('IMAGE_MAX_SIZE', dict(size=(IM_WIDTH, IM_HEIGHT), quality=NINETY_DPI))
 
 MARKDOWNX_SVG_JAVASCRIPT_PROTECTION = True

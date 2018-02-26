@@ -16,6 +16,7 @@ from .exceptions import MarkdownxImageUploadError
 from .settings import (
     MARKDOWNX_IMAGE_MAX_SIZE,
     MARKDOWNX_MEDIA_PATH,
+    MARKDOWNX_UPLOAD_BYPASS_IMAGE_PROCESSING_CONTENT_TYPES,
     MARKDOWNX_UPLOAD_CONTENT_TYPES,
     MARKDOWNX_UPLOAD_MAX_SIZE,
     MARKDOWNX_SVG_JAVASCRIPT_PROTECTION
@@ -56,11 +57,14 @@ class ImageForm(forms.Form):
         image_extension = content_type.split('/')[-1].upper()
         image_size = getattr(image, '_size')
 
-        if content_type.lower() != self._SVG_TYPE:
-            # Processing the raster graphic image.
-            # Note that vector graphics in SVG format
-            # do not require additional processing and
-            # may be stored as uploaded.
+        # ASL19 patch: MARKDOWNX_UPLOAD_BYPASS_IMAGE_PROCESSING_CONTENT_TYPES
+        # includes SVG by default (like the base plugin), and additional types
+        # if overridden. This allows us to support GIF uploads without them
+        # getting mangled by PIL [1], and allows us to avoid unnecessary
+        # recompression of lossy images.
+        #
+        # [1]: https://github.com/neutronX/django-markdownx/issues/24
+        if content_type.lower() not in MARKDOWNX_UPLOAD_BYPASS_IMAGE_PROCESSING_CONTENT_TYPES:
             image = self._process_raster(image, image_extension)
             image_size = image.tell()
 
